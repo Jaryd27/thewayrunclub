@@ -3,6 +3,19 @@ import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { StyleSheet } from "react-native";
 
+import { Polyline } from "react-native-maps";
+
+import { sampleRouteLink } from "../routes/SampleRoute";
+
+import {
+    getEncodedRoute,
+    decodeRoute
+} from "../services/RouteService";
+
+const encoded = getEncodedRoute(sampleRouteLink);
+
+const route = decodeRoute(encoded);
+
 export default function RunScreen() {
   const mapRef = useRef<MapView>(null);
 
@@ -58,6 +71,12 @@ export default function RunScreen() {
           }}
         />
       )}
+
+      <Polyline
+    coordinates={route.path}
+    strokeColor="#007AFF"
+    strokeWidth={5}
+/>
     </MapView>
   );
 }
