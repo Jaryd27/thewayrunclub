@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import MapView, {
   Marker,
   Polyline,
   Region,
 } from "react-native-maps";
-import * as Location from "expo-location";
 
 import { sampleRouteLink } from "../routes/SampleRoute";
 import {
@@ -15,6 +14,7 @@ import {
 
 import TurnMarker from "../components/TurnMarker";
 import NextTurnCard from "../components/NextTurnCard";
+import { useRunNavigation } from "../hooks/useRunNavigation";
 
 const encoded = getEncodedRoute(sampleRouteLink);
 const route = decodeRoute(encoded);
@@ -22,43 +22,11 @@ const route = decodeRoute(encoded);
 export default function RunScreen() {
   const mapRef = useRef<MapView>(null);
 
-  const [location, setLocation] =
-    useState<Location.LocationObject | null>(null);
-
-  const [currentTurn, setCurrentTurn] = useState(0);
-
-  useEffect(() => {
-    getLocation();
-
-    if (route.path.length > 0) {
-      setTimeout(() => {
-        mapRef.current?.fitToCoordinates(route.path, {
-          edgePadding: {
-            top: 80,
-            right: 80,
-            bottom: 250,
-            left: 80,
-          },
-          animated: true,
-        });
-      }, 500);
-    }
-  }, []);
-
-  async function getLocation() {
-    const { status } =
-      await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      alert("Location permission denied");
-      return;
-    }
-
-    const currentLocation =
-      await Location.getCurrentPositionAsync({});
-
-    setLocation(currentLocation);
-  }
+  const {
+    location,
+    currentTurn,
+    distanceToTurn,
+  } = useRunNavigation(route);
 
   const initialRegion: Region = {
     latitude: route.path[0]?.latitude ?? -26.2041,
@@ -75,8 +43,21 @@ export default function RunScreen() {
         initialRegion={initialRegion}
         showsUserLocation
         showsMyLocationButton
+        onMapReady={() => {
+          if (route.path.length > 0) {
+            mapRef.current?.fitToCoordinates(route.path, {
+              edgePadding: {
+                top: 80,
+                right: 80,
+                bottom: 250,
+                left: 80,
+              },
+              animated: true,
+            });
+          }
+        }}
       >
-        {/* User marker */}
+        {/* User Marker */}
         {location && (
           <Marker
             coordinate={{
@@ -96,7 +77,7 @@ export default function RunScreen() {
           lineJoin="round"
         />
 
-        {/* Turn markers */}
+        {/* Turn Markers */}
         {route.landmarks.map((landmark, index) => (
           <Marker
             key={index}
@@ -123,7 +104,7 @@ export default function RunScreen() {
           route.landmarks[currentTurn]?.name ??
           ""
         }
-        distance={42}
+        distance={distanceToTurn}
       />
     </View>
   );
