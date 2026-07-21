@@ -23,10 +23,11 @@ export default function RunScreen() {
   const mapRef = useRef<MapView>(null);
 
   const {
-    location,
-    currentTurn,
-    distanceToTurn,
-  } = useRunNavigation(route);
+  location,
+  currentTurn,
+  distanceToTurn,
+  isFinished,
+} = useRunNavigation(route);
 
   const initialRegion: Region = {
     latitude: route.path[0]?.latitude ?? -26.2041,
@@ -57,16 +58,7 @@ export default function RunScreen() {
           }
         }}
       >
-        {/* User Marker */}
-        {location && (
-          <Marker
-            coordinate={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-            title="You"
-          />
-        )}
+        
 
         {/* Route */}
         <Polyline
@@ -96,16 +88,15 @@ export default function RunScreen() {
       </MapView>
 
       <NextTurnCard
-        instruction={
-          route.landmarks[currentTurn]?.instruction ??
-          "Route Complete"
-        }
-        road={
-          route.landmarks[currentTurn]?.name ??
-          ""
-        }
-        distance={distanceToTurn}
-      />
+  instruction={
+    route.landmarks[currentTurn]?.instruction ?? ""
+  }
+  road={
+    route.landmarks[currentTurn]?.name ?? ""
+  }
+  distance={distanceToTurn}
+  isFinished={isFinished}
+/>
     </View>
   );
 }
