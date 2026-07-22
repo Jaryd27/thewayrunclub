@@ -1,46 +1,21 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView } from "react-native";
 
 import Screen from "../components/Screen";
-import Button from "../components/Button";
-
-import { Colors } from "../theme/colors";
-import { FontSize } from "../theme/typography";
+import HeroSection from "../components/HeroSection";
+import Dashboard from "../components/Dashboard";
 
 export default function HomeScreen() {
   return (
     <Screen>
-      <View style={styles.container}>
-        <Text style={styles.title}>WayRunner</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+      >
+        <HeroSection />
 
-        <Text style={styles.subtitle}>
-          Find your way. Run with confidence.
-        </Text>
+        <Dashboard />
 
-        <View style={{ marginTop: 40 }}>
-          <Button
-            title="Start Running"
-            onPress={() => console.log("Pressed")}
-          />
-        </View>
-      </View>
+      </ScrollView>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  title: {
-    color: Colors.text,
-    fontSize: FontSize.title,
-    fontWeight: "700",
-  },
-  subtitle: {
-    color: Colors.textSecondary,
-    marginTop: 8,
-    fontSize: FontSize.body,
-  },
-});

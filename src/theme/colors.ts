@@ -1,16 +1,23 @@
 export const Colors = {
-  background: "#0B1220",
-  surface: "#111827",
+  background: "#FFF8F4",
 
-  primary: "#16A34A",      // Green
-  secondary: "#38BDF8",    // Blue
+  surface: "#FFFFFF",
 
-  text: "#FFFFFF",
-  textSecondary: "#94A3B8",
+  primary: "#C98798",       // Dusty rose from logo
 
-  border: "#1E293B",
+  secondary: "#E6B9A8",      // Soft peach
 
-  success: "#22C55E",
-  warning: "#F59E0B",
-  danger: "#EF4444",
+  accent: "#6F8E77",         // Muted sage green
+
+  text: "#413A36",
+
+  textSecondary: "#7C746F",
+
+  border: "#ECE4DF",
+
+  success: "#6F8E77",
+
+  warning: "#E0A458",
+
+  danger: "#D46A6A",
 };
