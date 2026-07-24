@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
 } from "react-native";
+
+import { useFocusEffect } from "@react-navigation/native";
 
 import Screen from "../components/Screen";
 import RouteCard from "../components/RouteCard";
@@ -14,10 +16,34 @@ import { FontSize } from "../theme/typography";
 
 import { clubRoutes } from "../routes/ClubRoutes";
 
+import {
+  saveSelectedRoute,
+  getSelectedRoute,
+} from "../storage/SelectedRoute";
+
 export default function RoutesScreen() {
   const [selectedRoute, setSelectedRoute] = useState(
     clubRoutes[0].id
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      async function loadSelectedRoute() {
+        const saved = await getSelectedRoute();
+
+        if (saved) {
+          setSelectedRoute(saved);
+        }
+      }
+
+      loadSelectedRoute();
+    }, [])
+  );
+
+  async function selectRoute(id: string) {
+    setSelectedRoute(id);
+    await saveSelectedRoute(id);
+  }
 
   return (
     <Screen>
@@ -39,7 +65,7 @@ export default function RoutesScreen() {
             <RouteCard
               route={item}
               selected={selectedRoute === item.id}
-              onPress={() => setSelectedRoute(item.id)}
+              onPress={() => selectRoute(item.id)}
             />
           )}
         />

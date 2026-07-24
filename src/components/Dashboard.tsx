@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -6,15 +6,28 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+} from "@react-navigation/native";
 
 import Button from "./Button";
 
 import { Colors } from "../theme/colors";
 import { FontSize } from "../theme/typography";
 
+import {
+  ClubRoute,
+  clubRoutes,
+} from "../routes/ClubRoutes";
+
+import { getSelectedClubRoute } from "../routes/getSelectedClubRoute";
+
 export default function Dashboard() {
   const navigation = useNavigation<any>();
+
+  const [selectedRoute, setSelectedRoute] =
+    useState<ClubRoute>(clubRoutes[0]);
 
   const hour = new Date().getHours();
 
@@ -27,6 +40,17 @@ export default function Dashboard() {
   if (hour >= 18) {
     greeting = "Good Evening 🌙";
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      async function loadRoute() {
+        const route = await getSelectedClubRoute();
+        setSelectedRoute(route);
+      }
+
+      loadRoute();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -42,17 +66,17 @@ export default function Dashboard() {
       <View style={styles.routeCard}>
 
         <Text style={styles.routeName}>
-          Saturday Club Route
+          {selectedRoute.name}
         </Text>
 
         <View style={styles.infoRow}>
 
           <Text style={styles.info}>
-            📏 8.2 km
+            📏 {selectedRoute.distance} km
           </Text>
 
           <Text style={styles.info}>
-            ↪ 35 Turns
+            ↪ {selectedRoute.turns} Turns
           </Text>
 
         </View>
@@ -85,7 +109,6 @@ export default function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-
   container: {
     paddingHorizontal: 24,
     paddingBottom: 60,
@@ -105,15 +128,10 @@ const styles = StyleSheet.create({
 
   routeCard: {
     marginTop: 15,
-
     backgroundColor: Colors.surface,
-
     borderRadius: 24,
-
     padding: 24,
-
     borderWidth: 1,
-
     borderColor: Colors.border,
   },
 
@@ -125,8 +143,8 @@ const styles = StyleSheet.create({
 
   infoRow: {
     flexDirection: "row",
-    marginTop: 18,
     justifyContent: "space-between",
+    marginTop: 18,
   },
 
   info: {
@@ -137,13 +155,9 @@ const styles = StyleSheet.create({
   selectedBadge: {
     marginTop: 22,
     alignSelf: "flex-start",
-
     backgroundColor: "#F5E4D8",
-
     borderRadius: 30,
-
     paddingHorizontal: 14,
-
     paddingVertical: 8,
   },
 
@@ -154,14 +168,9 @@ const styles = StyleSheet.create({
 
   routes: {
     marginTop: 25,
-
     textAlign: "center",
-
     color: Colors.primary,
-
     fontSize: 17,
-
     fontWeight: "600",
   },
-
 });
