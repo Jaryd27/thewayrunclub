@@ -12,9 +12,10 @@ import {
 } from "@react-navigation/native";
 
 import Button from "./Button";
+import MiniRoutePreview from "./miniRoutePreview";
+import StatCard from "./StatCard";
 
 import { Colors } from "../theme/colors";
-import { FontSize } from "../theme/typography";
 
 import {
   ClubRoute,
@@ -24,6 +25,7 @@ import {
 import { getSelectedClubRoute } from "../routes/getSelectedClubRoute";
 
 export default function Dashboard() {
+
   const navigation = useNavigation<any>();
 
   const [selectedRoute, setSelectedRoute] =
@@ -43,57 +45,76 @@ export default function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
+
       async function loadRoute() {
         const route = await getSelectedClubRoute();
         setSelectedRoute(route);
       }
 
       loadRoute();
+
     }, [])
   );
 
   return (
+
     <View style={styles.container}>
 
       <Text style={styles.greeting}>
         {greeting}
       </Text>
 
-      <Text style={styles.heading}>
-        Today's Run
+      <Text style={styles.ready}>
+        Ready to move?
       </Text>
 
-      <View style={styles.routeCard}>
+      <Text style={styles.section}>
+        TODAY'S RUN
+      </Text>
 
-        <Text style={styles.routeName}>
-          {selectedRoute.name}
-        </Text>
+      <MiniRoutePreview />
 
-        <View style={styles.infoRow}>
+      <Text style={styles.routeName}>
+        {selectedRoute.name}
+      </Text>
 
-          <Text style={styles.info}>
-            📏 {selectedRoute.distance} km
-          </Text>
+      <Text style={styles.description}>
+        {selectedRoute.description}
+      </Text>
 
-          <Text style={styles.info}>
-            ↪ {selectedRoute.turns} Turns
-          </Text>
+      <View style={styles.statsRow}>
 
-        </View>
+        <StatCard
+          icon="📏"
+          title="Distance"
+          value={`${selectedRoute.distance} km`}
+        />
 
-        <View style={styles.selectedBadge}>
-          <Text style={styles.selectedText}>
-            ✓ Selected
-          </Text>
-        </View>
+        <View style={styles.spacing} />
+
+        <StatCard
+          icon="⛰"
+          title="Elevation Gain"
+          value={`+${selectedRoute.elevationGain} m`}
+        />
+
+        <View style={styles.spacing} />
+
+        <StatCard
+          icon="🟠"
+          title="Difficulty"
+          value={selectedRoute.difficulty}
+        />
 
       </View>
 
-      <View style={{ marginTop: 28 }}>
+      <View style={styles.buttonContainer}>
+
         <Button
-          title="Start Running"
+          title="Start Run"
           onPress={() => navigation.navigate("Run")}
         />
+
       </View>
 
       <TouchableOpacity
@@ -105,72 +126,90 @@ export default function Dashboard() {
       </TouchableOpacity>
 
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
+
   container: {
     paddingHorizontal: 24,
     paddingBottom: 60,
   },
 
   greeting: {
-    fontSize: FontSize.heading,
+    fontSize: 30,
     fontWeight: "700",
     color: Colors.text,
   },
 
-  heading: {
-    marginTop: 18,
-    fontSize: FontSize.body,
+  ready: {
+    marginTop: 8,
+    fontSize: 18,
     color: Colors.textSecondary,
   },
 
-  routeCard: {
-    marginTop: 15,
-    backgroundColor: Colors.surface,
-    borderRadius: 24,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: Colors.border,
+  section: {
+    marginTop: 40,
+    marginBottom: 18,
+
+    fontSize: 13,
+
+    letterSpacing: 2,
+
+    fontWeight: "700",
+
+    color: Colors.textSecondary,
   },
 
   routeName: {
-    fontSize: 22,
+    marginTop: 24,
+
+    fontSize: 28,
+
     fontWeight: "700",
+
+    textAlign: "center",
+
     color: Colors.text,
   },
 
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 18,
-  },
+  description: {
+    marginTop: 14,
 
-  info: {
+    textAlign: "center",
+
     fontSize: 16,
+
+    lineHeight: 24,
+
     color: Colors.textSecondary,
   },
 
-  selectedBadge: {
-    marginTop: 22,
-    alignSelf: "flex-start",
-    backgroundColor: "#F5E4D8",
-    borderRadius: 30,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+  statsRow: {
+    flexDirection: "row",
+
+    marginTop: 30,
   },
 
-  selectedText: {
-    color: Colors.primary,
-    fontWeight: "700",
+  spacing: {
+    width: 10,
+  },
+
+  buttonContainer: {
+    marginTop: 40,
   },
 
   routes: {
-    marginTop: 25,
+    marginTop: 22,
+
     textAlign: "center",
+
     color: Colors.primary,
-    fontSize: 17,
+
     fontWeight: "600",
+
+    fontSize: 17,
   },
+
 });

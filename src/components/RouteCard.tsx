@@ -22,7 +22,7 @@ export default function RouteCard({
 }: Props) {
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.85}
       onPress={onPress}
       style={[
         styles.card,
@@ -42,23 +42,52 @@ export default function RouteCard({
         </Text>
       </View>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.info}>
-          📏 {route.distance} km
-        </Text>
+      <Text style={styles.description}>
+        {route.description}
+      </Text>
 
-        <Text style={styles.info}>
-          ↪ {route.turns} Turns
-        </Text>
-      </View>
+      <View style={styles.divider} />
 
-      {selected && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>
-            ✓ Selected
+      <Text style={styles.info}>
+        📏 {route.distance} km
+      </Text>
+
+      <Text style={styles.info}>
+        ⛰ +{route.elevationGain} m
+      </Text>
+
+      <Text style={styles.info}>
+        ↪ {route.turns} Turns
+      </Text>
+
+      <View style={styles.footer}>
+
+        <View
+          style={[
+            styles.difficultyBadge,
+
+            route.difficulty === "Easy" && styles.easy,
+
+            route.difficulty === "Moderate" && styles.moderate,
+
+            route.difficulty === "Challenging" && styles.hard,
+          ]}
+        >
+          <Text style={styles.difficultyText}>
+            {route.difficulty}
           </Text>
         </View>
-      )}
+
+        {selected && (
+          <View style={styles.selectedBadge}>
+            <Text style={styles.selectedText}>
+              ✓ Selected
+            </Text>
+          </View>
+        )}
+
+      </View>
+
     </TouchableOpacity>
   );
 }
@@ -66,39 +95,28 @@ export default function RouteCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
-
     borderRadius: 22,
-
-    padding: 20,
-
+    padding: 22,
     marginBottom: 18,
-
     borderWidth: 1,
-
     borderColor: Colors.border,
   },
 
   selectedCard: {
     borderColor: Colors.primary,
-
     borderWidth: 2,
   },
 
   header: {
     flexDirection: "row",
-
     alignItems: "center",
   },
 
   dot: {
-    width: 12,
-
-    height: 12,
-
-    borderRadius: 6,
-
-    backgroundColor: "#CFCFCF",
-
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#C9C9C9",
     marginRight: 12,
   },
 
@@ -107,44 +125,69 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 20,
-
-    color: Colors.text,
-
+    fontSize: 21,
     fontWeight: "700",
+    color: Colors.text,
   },
 
-  infoRow: {
-    flexDirection: "row",
+  description: {
+    marginTop: 12,
+    color: Colors.textSecondary,
+    fontSize: 15,
+    lineHeight: 22,
+  },
 
-    justifyContent: "space-between",
-
-    marginTop: 18,
+  divider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: 18,
   },
 
   info: {
-    fontSize: 15,
-
-    color: Colors.textSecondary,
+    color: Colors.text,
+    fontSize: 16,
+    marginBottom: 10,
   },
 
-  badge: {
-    marginTop: 20,
+  footer: {
+    marginTop: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 
-    alignSelf: "flex-start",
-
-    backgroundColor: "#F5E4D8",
-
-    borderRadius: 20,
-
+  difficultyBadge: {
     paddingHorizontal: 14,
-
-    paddingVertical: 8,
+    paddingVertical: 7,
+    borderRadius: 20,
   },
 
-  badgeText: {
-    color: Colors.primary,
+  easy: {
+    backgroundColor: "#D9F4D8",
+  },
 
+  moderate: {
+    backgroundColor: "#F5E4D8",
+  },
+
+  hard: {
+    backgroundColor: "#F8D7D7",
+  },
+
+  difficultyText: {
+    fontWeight: "700",
+    color: Colors.text,
+  },
+
+  selectedBadge: {
+    backgroundColor: Colors.primary,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+
+  selectedText: {
+    color: "#FFFFFF",
     fontWeight: "700",
   },
 });
