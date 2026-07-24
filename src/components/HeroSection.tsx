@@ -86,9 +86,9 @@ const styles = StyleSheet.create({
   scroll: {
     position: "absolute",
 
-    bottom: 50,
+    bottom: 90,
 
-    fontSize: 16,
+    fontSize: 13,
 
     color: Colors.textSecondary,
 
