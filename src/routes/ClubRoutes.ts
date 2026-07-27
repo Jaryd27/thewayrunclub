@@ -15,7 +15,7 @@ export interface ClubRoute {
 
   difficulty: "Easy" | "Moderate" | "Challenging";
 
-  route: string;
+  routeLink: string;
 }
 
 export const clubRoutes: ClubRoute[] = [
@@ -35,7 +35,7 @@ export const clubRoutes: ClubRoute[] = [
 
     difficulty: "Moderate",
 
-    route: sampleRouteLink,
+    routeLink: sampleRouteLink,
   },
 
   {
@@ -54,7 +54,7 @@ export const clubRoutes: ClubRoute[] = [
 
     difficulty: "Easy",
 
-    route: sampleRouteLink,
+    routeLink: sampleRouteLink,
   },
 
   {
@@ -73,6 +73,6 @@ export const clubRoutes: ClubRoute[] = [
 
     difficulty: "Easy",
 
-    route: sampleRouteLink,
+    routeLink: sampleRouteLink,
   },
 ];

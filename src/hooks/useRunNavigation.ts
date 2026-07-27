@@ -124,18 +124,12 @@ export function useRunNavigation(route: any) {
 
               speak("Route complete. Great run!");
 
-              console.log("🏁 Route Complete");
-
               setIsFinished(true);
 
               subscription.remove();
 
               return;
             }
-
-            console.log(
-              `Reached Turn ${turnIndex + 1}`
-            );
 
             currentTurnRef.current++;
 

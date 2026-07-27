@@ -1,33 +1,32 @@
-import React, { useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import MapView, {
   Marker,
   Polyline,
   Region,
 } from "react-native-maps";
 
-import { sampleRouteLink } from "../routes/SampleRoute";
 import {
   getEncodedRoute,
   decodeRoute,
 } from "../services/RouteService";
 
+import { Route } from "../types/Route";
+
 import TurnMarker from "../components/TurnMarker";
 import NextTurnCard from "../components/NextTurnCard";
 import { useRunNavigation } from "../hooks/useRunNavigation";
 
-const encoded = getEncodedRoute(sampleRouteLink);
-const route = decodeRoute(encoded);
+import { getSelectedClubRoute } from "../routes/getSelectedClubRoute";
 
-export default function RunScreen() {
+function RunNavigation({ route }: { route: Route }) {
   const mapRef = useRef<MapView>(null);
 
   const {
-  location,
-  currentTurn,
-  distanceToTurn,
-  isFinished,
-} = useRunNavigation(route);
+    currentTurn,
+    distanceToTurn,
+    isFinished,
+  } = useRunNavigation(route);
 
   const initialRegion: Region = {
     latitude: route.path[0]?.latitude ?? -26.2041,
@@ -45,22 +44,17 @@ export default function RunScreen() {
         showsUserLocation
         showsMyLocationButton
         onMapReady={() => {
-          if (route.path.length > 0) {
-            mapRef.current?.fitToCoordinates(route.path, {
-              edgePadding: {
-                top: 80,
-                right: 80,
-                bottom: 250,
-                left: 80,
-              },
-              animated: true,
-            });
-          }
+          mapRef.current?.fitToCoordinates(route.path, {
+            edgePadding: {
+              top: 80,
+              right: 80,
+              bottom: 250,
+              left: 80,
+            },
+            animated: true,
+          });
         }}
       >
-        
-
-        {/* Route */}
         <Polyline
           coordinates={route.path}
           strokeColor="#2563EB"
@@ -69,7 +63,6 @@ export default function RunScreen() {
           lineJoin="round"
         />
 
-        {/* Turn Markers */}
         {route.landmarks.map((landmark, index) => (
           <Marker
             key={index}
@@ -88,17 +81,45 @@ export default function RunScreen() {
       </MapView>
 
       <NextTurnCard
-  instruction={
-    route.landmarks[currentTurn]?.instruction ?? ""
-  }
-  road={
-    route.landmarks[currentTurn]?.name ?? ""
-  }
-  distance={distanceToTurn}
-  isFinished={isFinished}
-/>
+        instruction={
+          route.landmarks[currentTurn]?.instruction ?? ""
+        }
+        road={
+          route.landmarks[currentTurn]?.name ?? ""
+        }
+        distance={distanceToTurn}
+        isFinished={isFinished}
+      />
     </View>
   );
+}
+
+export default function RunScreen() {
+  const [route, setRoute] = useState<Route | null>(null);
+
+  useEffect(() => {
+    async function loadRoute() {
+      const selected = await getSelectedClubRoute();
+
+      const encoded = getEncodedRoute(
+        selected.routeLink
+      );
+
+      setRoute(decodeRoute(encoded));
+    }
+
+    loadRoute();
+  }, []);
+
+  if (!route) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return <RunNavigation route={route} />;
 }
 
 const styles = StyleSheet.create({
@@ -108,5 +129,11 @@ const styles = StyleSheet.create({
 
   map: {
     flex: 1,
+  },
+
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
