@@ -13,7 +13,9 @@ import {
 
 import Button from "./Button";
 import MiniRoutePreview from "./miniRoutePreview";
+import InteractiveRouteMap from "./InteractiveRouteMap";
 import StatCard from "./StatCard";
+import ExpandableSection from "./ExpandableSection";
 
 import { Colors } from "../theme/colors";
 
@@ -108,6 +110,14 @@ export default function Dashboard() {
 
       </View>
 
+      <ExpandableSection title="Today's Route">
+
+        <InteractiveRouteMap
+          route={selectedRoute}
+        />
+
+      </ExpandableSection>
+
       <View style={styles.buttonContainer}>
 
         <Button
@@ -121,13 +131,14 @@ export default function Dashboard() {
         onPress={() => navigation.navigate("Routes")}
       >
         <Text style={styles.routes}>
-          Explore Routes →
+          Explore Other Routes →
         </Text>
       </TouchableOpacity>
 
     </View>
 
   );
+
 }
 
 const styles = StyleSheet.create({
@@ -152,43 +163,30 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 40,
     marginBottom: 18,
-
     fontSize: 13,
-
     letterSpacing: 2,
-
     fontWeight: "700",
-
     color: Colors.textSecondary,
   },
 
   routeName: {
     marginTop: 24,
-
     fontSize: 28,
-
     fontWeight: "700",
-
     textAlign: "center",
-
     color: Colors.text,
   },
 
   description: {
     marginTop: 14,
-
     textAlign: "center",
-
     fontSize: 16,
-
     lineHeight: 24,
-
     color: Colors.textSecondary,
   },
 
   statsRow: {
     flexDirection: "row",
-
     marginTop: 30,
   },
 
@@ -197,19 +195,16 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    marginTop: 40,
+    marginTop: 36,
   },
 
   routes: {
     marginTop: 22,
-
     textAlign: "center",
-
     color: Colors.primary,
-
     fontWeight: "600",
-
     fontSize: 17,
+    marginBottom: 50,
   },
 
 });

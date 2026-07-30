@@ -1,68 +1,94 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import MapView, {
+  Polyline,
+  Marker,
+} from "react-native-maps";
+import { StyleSheet } from "react-native";
 
 import { Colors } from "../theme/colors";
 
+import { Route } from "../types/Route";
+
+import {
+  getEncodedRoute,
+  decodeRoute,
+} from "../services/RouteService";
+
+import { getSelectedClubRoute } from "../routes/getSelectedClubRoute";
+
 export default function MiniRoutePreview() {
+  const mapRef = useRef<MapView>(null);
+
+  const [route, setRoute] = useState<Route | null>(null);
+
+  useEffect(() => {
+    async function loadRoute() {
+      const selected = await getSelectedClubRoute();
+
+      const encoded = getEncodedRoute(
+        selected.routeLink
+      );
+
+      const decoded = decodeRoute(encoded);
+
+      setRoute(decoded);
+    }
+
+    loadRoute();
+  }, []);
+
+  useEffect(() => {
+    if (!route || !mapRef.current) return;
+
+    mapRef.current.fitToCoordinates(route.path, {
+      edgePadding: {
+        top: 25,
+        right: 25,
+        bottom: 25,
+        left: 25,
+      },
+      animated: false,
+    });
+  }, [route]);
+
+  if (!route) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
+    <MapView
+      ref={mapRef}
+      style={styles.map}
+      pointerEvents="none"
+      toolbarEnabled={false}
+      rotateEnabled={false}
+      pitchEnabled={false}
+      scrollEnabled={false}
+      zoomEnabled={false}
+      showsCompass={false}
+      showsScale={false}
+      showsBuildings={false}
+      showsTraffic={false}
+      showsUserLocation={false}
+      showsMyLocationButton={false}
+    >
+      <Polyline
+        coordinates={route.path}
+        strokeColor={Colors.primary}
+        strokeWidth={5}
+      />
 
-      <Text style={styles.icon}>
-        🗺
-      </Text>
+      <Marker coordinate={route.path[0]} />
 
-      <Text style={styles.title}>
-        Route Preview
-      </Text>
-
-      <Text style={styles.subtitle}>
-        Live route preview coming soon
-      </Text>
-
-    </View>
+      <Marker coordinate={route.path[route.path.length - 1]} />
+    </MapView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  map: {
     height: 180,
-
     borderRadius: 24,
-
-    backgroundColor: Colors.surface,
-
-    borderWidth: 1,
-
-    borderColor: Colors.border,
-
-    justifyContent: "center",
-
-    alignItems: "center",
-  },
-
-  icon: {
-    fontSize: 42,
-  },
-
-  title: {
-    marginTop: 14,
-
-    fontSize: 18,
-
-    fontWeight: "700",
-
-    color: Colors.text,
-  },
-
-  subtitle: {
-    marginTop: 8,
-
-    color: Colors.textSecondary,
-
-    fontSize: 15,
+    overflow: "hidden",
   },
 });
