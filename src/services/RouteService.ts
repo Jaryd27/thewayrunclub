@@ -12,28 +12,58 @@ export function getEncodedRoute(link: string): string {
 }
 
 export function decodeRoute(encoded: string): Route {
+
   const json = decode(encoded);
 
   const compact = JSON.parse(json);
 
   return {
+
     name: compact.n,
 
-    path: compact.p.map(([lat, lon]: number[]) => ({
-      latitude: lat,
-      longitude: lon,
-    })),
+    path: compact.p.map((point: any) => {
+
+      // Old route format
+      if (Array.isArray(point) && point.length === 2) {
+
+        return {
+          latitude: point[0],
+          longitude: point[1],
+          elevation: null,
+        };
+
+      }
+
+      // New route format
+
+      return {
+        latitude: point[0],
+        longitude: point[1],
+        elevation: point[2] ?? null,
+      };
+
+    }),
 
     landmarks: compact.l.map(
+
       ([name, instruction, lat, lon, radius]: any[]) => ({
+
         name,
+
         instruction,
+
         latitude: lat,
+
         longitude: lon,
+
         radius,
+
       })
+
     ),
 
     updated_at: compact.u,
+
   };
+
 }
