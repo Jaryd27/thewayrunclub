@@ -34,7 +34,7 @@ export default function ExpandableSection({
 
   const height = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 500],
+    outputRange: [0, 650],
   });
 
   const rotate = animation.interpolate({

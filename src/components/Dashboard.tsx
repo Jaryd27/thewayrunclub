@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -26,12 +26,33 @@ import {
 
 import { getSelectedClubRoute } from "../routes/getSelectedClubRoute";
 
+import { getEncodedRoute, decodeRoute } from "../services/RouteService";
+import ElevationProfile from "./ElevationProfile";
+
 export default function Dashboard() {
 
   const navigation = useNavigation<any>();
 
   const [selectedRoute, setSelectedRoute] =
     useState<ClubRoute>(clubRoutes[0]);
+
+    const decodedRoute = useMemo(() => {
+  try {
+    const encoded = getEncodedRoute(selectedRoute.routeLink);
+    return decodeRoute(encoded);
+  } catch (error) {
+    console.error("Failed to decode route:", error);
+    return null;
+  }
+}, [selectedRoute]);
+
+    console.log(
+  "Dashboard elevation points:",
+  decodedRoute?.path.filter(
+    point => point.elevation !== null
+  ).length
+);
+
 
   const hour = new Date().getHours();
 
@@ -110,13 +131,26 @@ export default function Dashboard() {
 
       </View>
 
+  
       <ExpandableSection title="Today's Route">
 
-        <InteractiveRouteMap
-          route={selectedRoute}
-        />
+  <InteractiveRouteMap
+    route={selectedRoute}
+  />
 
-      </ExpandableSection>
+  {decodedRoute && (
+    <ElevationProfile
+      profile={decodedRoute.path
+        .filter(point => point.elevation !== null)
+        .map((point, index) => ({
+          distance: index,
+          elevation: point.elevation!,
+        }))
+      }
+    />
+  )}
+
+</ExpandableSection>
 
       <View style={styles.buttonContainer}>
 
